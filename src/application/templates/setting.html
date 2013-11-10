@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block style_block %}
+    <style type="text/css">
+        table.table { width: 60%; }
+    </style>
+{% endblock %}
+
+{% block content %}
+<h1>Current setting: {{ cur_setting.temp_c }} since {{ cur_setting.timestamp }}</h1>
+
+    <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+        <h3>Add a New Setting</h3>
+    </div>
+    <div class="modal-body">
+        <form id="new-setting-form" class="well form-horizontal"
+            action="{{ url_for('setting') }}" method="post" accept-charset="utf-8">
+            <fieldset>
+                {{ form.hidden_tag() }}
+                <div class="control-group">
+                    <div class="control-label">{{ form.name.label }}</div>
+                    <div class="controls">
+                        {{ form.name|safe }}
+                        {% if form.name.errors %}
+                        <ul class="errors">
+                            {% for error in form.name.errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label">{{ form.target.label }}</div>
+                    <div class="controls">
+                        {{ form.target|safe }}
+                        {% if form.target.errors %}
+                        <ul class="errors">
+                            {% for error in form.target.errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label">{{ form.temp_c.label }}</div>
+                    <div class="controls">
+                        {{ form.temp_c|safe }}
+                        {% if form.temp_c.errors %}
+                        <ul class="errors">
+                            {% for error in form.temp_c.errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <input class="btn btn-primary" type="submit" value="Add Setting"/>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+
+
+{% endblock content %}
+

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block style_block %}
+    <style type="text/css">
+        table.table { width: 60%; }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+    <h1 id="">All Readings</h1>
+    <div>&nbsp;</div>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Source</th>
+                <th>Temperature (Celsius)</th>
+                <th>Added by</th>
+                <th>Added on</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reading in readings %}
+            {% set reading_id = reading.key.id() %}
+            <tr>
+                <td>{{ reading.key.id() }}</td>
+                <td>{{ reading.name }}</td>
+                <td>{{ reading.source }}</td>
+                <td>{{ reading.temp_c }}</td>
+                <td>{{ reading.added_by }}</td>
+                <td class="nowrap">{{ reading.timestamp.strftime('%b %d, %Y %I:%M %p') }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="7">No readings yet</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock content %}
+
