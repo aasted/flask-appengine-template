@@ -18,32 +18,8 @@
             action="{{ url_for('setting') }}" method="post" accept-charset="utf-8">
             <fieldset>
                 {{ form.hidden_tag() }}
-                <div class="control-group">
-                    <div class="control-label">{{ form.name.label }}</div>
-                    <div class="controls">
-                        {{ form.name|safe }}
-                        {% if form.name.errors %}
-                        <ul class="errors">
-                            {% for error in form.name.errors %}
-                            <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="control-group">
-                    <div class="control-label">{{ form.target.label }}</div>
-                    <div class="controls">
-                        {{ form.target|safe }}
-                        {% if form.target.errors %}
-                        <ul class="errors">
-                            {% for error in form.target.errors %}
-                            <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                        {% endif %}
-                    </div>
-                </div>
+                <input type="hidden" name="name" value="GAE Setting">
+                <input type="hidden" name="target" value="SousVide">
                 <div class="control-group">
                     <div class="control-label">{{ form.temp_c.label }}</div>
                     <div class="controls">
