@@ -45,18 +45,30 @@
                     </div>
                 </div>
                 <div class="control-group">
-                    <div class="control-label">{{ form.temp_c.label }}</div>
+                    <div class="control-label">{{ form.temp_readings_c.label }}</div>
                     <div class="controls">
-                        {{ form.temp_c|safe }}
-                        {% if form.temp_c.errors %}
+                        {{ form.temp_readings_c|safe }}
+                        {% if form.temp_readings_c.errors %}
                         <ul class="errors">
-                            {% for error in form.temp_c.errors %}
+                            {% for error in form.temp_readings_c.errors %}
                             <li>{{ error }}</li>
                             {% endfor %}
                         </ul>
                         {% endif %}
                     </div>
                 </div>
+                <div class="control-group">
+                    <div class="control-label">{{ form.durable.label }}</div>
+                    <div class="controls">
+                        {{ form.durable|safe }}
+                        {% if form.durable.errors %}
+                        <ul class="errors">
+                            {% for error in form.durable.errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
                 <div class="control-group">
                     <div class="controls">
                         <input class="btn btn-primary" type="submit" value="Add Reading"/>

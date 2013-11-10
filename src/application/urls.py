@@ -24,9 +24,6 @@ app.add_url_rule('/temperature/settings', 'list_settings', view_func=views.list_
 app.add_url_rule('/temperature/current/setting', 'setting', view_func=views.setting, methods=['GET', 'POST'])
 app.add_url_rule('/temperature/current/reading', 'reading', view_func=views.reading, methods=['GET', 'POST'])
 
-# Examples list page (cached)
-app.add_url_rule('/examples/cached', 'cached_examples', view_func=views.cached_examples, methods=['GET'])
-
 # Contrived admin-only view example
 app.add_url_rule('/admin_only', 'admin_only', view_func=views.admin_only)
 

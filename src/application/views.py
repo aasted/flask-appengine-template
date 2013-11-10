@@ -8,6 +8,8 @@ For example the *say_hello* handler, handling the URL route '/hello/<username>',
   must be passed *username* as the argument.
 
 """
+import datetime
+
 from google.appengine.api import memcache, users
 from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
 
@@ -17,22 +19,26 @@ from flask_cache import Cache
 
 from application import app
 from decorators import login_required, admin_required
-from forms import TemperatureReadingForm, TemperatureSettingForm
-from models import TemperatureReading, TemperatureSetting
+from forms import TemperatureReadingBatchForm, TemperatureSettingForm
+from models import TemperatureReading, TemperatureReadingBatch, TemperatureSetting
 
 
 # Flask-Cache (configured to use App Engine Memcache API)
 cache = Cache(app)
 
 
+@login_required
 def home():
-    return redirect(url_for('reading'))
+    """Render the base view"""
+    cur_reading = get_current_reading()
+    cur_setting = get_current_setting()
+    return render_template('home.html', cur_reading=cur_reading, cur_setting=cur_setting)
 
 
 @login_required
 def list_readings():
     """List all temperature readings"""
-    readings = TemperatureReading.query()
+    readings = TemperatureReadingBatch.query()
     return render_template('list_readings.html', readings=readings)
 
 
@@ -45,16 +51,16 @@ def list_settings():
 
 @login_required
 def reading():
-    """Fetch or set the current reading"""
-    form = TemperatureReadingForm()
+    """Set a batch of readings"""
+    form = TemperatureReadingBatchForm()
     if form.validate_on_submit():
-        new_reading = TemperatureReading(
+        new_reading = TemperatureReadingBatch(
             name=form.name.data,
             source=form.source.data,
-            temp_c=form.temp_c.data,
+            temp_readings_c=form.temp_readings_c.data,
             added_by=users.get_current_user()
         )
-        set_reading(new_reading)
+        store_batch_reading(new_reading, durable=form.durable.data)
     cur_reading = get_current_reading()
     return render_template('reading.html', cur_reading=cur_reading, form=form)
 
@@ -81,23 +87,17 @@ def admin_only():
     return 'Super-seekrit admin page.'
 
 
-@cache.cached(timeout=60)
-def cached_examples():
-    """This view should be cached for 60 sec"""
-    examples = ExampleModel.query()
-    return render_template('list_examples_cached.html', examples=examples)
-
-
 def get_current_reading():
     """Return current temperature reading"""
     r = memcache.get('current_reading')
     if r:
-        return r
-    r = TemperatureReading.query().order(-TemperatureReading.timestamp).fetch(1)
+        return r.readings()[-1]
+    r = TemperatureReadingBatch.query().order(-TemperatureReadingBatch.timestamp).fetch(1)
     if r:
         r = r[0]
         memcache.add('current_reading', r)
-    return r
+        return r.readings()[-1]
+    return None
 
 
 def get_current_setting():
@@ -112,16 +112,16 @@ def get_current_setting():
     return r
 
 
-def set_reading(new_reading):
+def store_batch_reading(new_reading, durable):
     """Return True on succesful set, false otherwise"""
     try:
-        new_reading.put()
+        if durable:
+            new_reading.put()
         memcache.set('current_reading', new_reading)
         return True 
     except CapabilityDisabledError:
         flash(u'App Engine Datastore is currently in read-only mode.', 'info') 
         return False
-
 
 def set_setting(new_setting):
     """Return True on succesful set, false otherwise"""
